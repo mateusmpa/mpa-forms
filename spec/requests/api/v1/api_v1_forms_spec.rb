@@ -10,7 +10,7 @@ RSpec.describe 'Api::V1::Forms', type: :request do
       before do
         @user = create(:user)
         @form1 = create(:form, user: @user)
-        @form1 = create(:form, user: @user)
+        @form2 = create(:form, user: @user)
 
         get '/api/v1/forms', params: {}, headers: header_with_authentication(@user)
       end
@@ -50,7 +50,7 @@ RSpec.describe 'Api::V1::Forms', type: :request do
         end
 
         it 'returned form with right datas' do
-          expect(json).to eql(JSON.parse(@form.to_json))
+          expect(json.except('questions')).to eql(JSON.parse(@form.to_json))
         end
 
         it 'returned associated questions' do
@@ -111,16 +111,15 @@ RSpec.describe 'Api::V1::Forms', type: :request do
           end
         end
       end
-    end
 
-    context 'And with invalid params' do
-      before do
-        @other_user = create(:user)
-        post '/api/v1/forms', params: { form: {} }, headers: header_with_authentication(@user)
-      end
+      context 'And with invalid params' do
+        before do
+          post '/api/v1/forms', params: { form: {} }, headers: header_with_authentication(@user)
+        end
 
-      it 'returns 400' do
-        expect_status(400)
+        it 'returns 400' do
+          expect_status(400)
+        end
       end
     end
   end
@@ -140,7 +139,7 @@ RSpec.describe 'Api::V1::Forms', type: :request do
           before do
             @form = create(:form, user: @user)
             @form_attributes = attributes_for(:form, id: @form.id)
-            put "/api/v1/forms/#{@form.friendly_id}", params: { form: @form_attributes }, header: header_with_authentication(@user)
+            put "/api/v1/forms/#{@form.friendly_id}", params: { form: @form_attributes }, headers: header_with_authentication(@user)
           end
 
           it 'returns 200' do
