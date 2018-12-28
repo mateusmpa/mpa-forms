@@ -53,7 +53,7 @@ RSpec.describe 'Api::V1::Questions', type: :request do
 
         context 'invalid form' do
           it 'returns 404' do
-            post '/api/v1/question', params: { question: {} }, headers: header_with_authentication(@user)
+            post '/api/v1/questions', params: { question: {} }, headers: header_with_authentication(@user)
             expect_status(404)
           end
         end
@@ -90,10 +90,12 @@ RSpec.describe 'Api::V1::Questions', type: :request do
               expect(@question[field.first]).to eql(field.last)
             end
           end
-        end
 
-        it 'returns correct data' do
-          @question_
+          it 'returns correct data' do
+            @question_attributes.each do |field|
+              expect(json[field.first.to_s]).to eql(field.last)
+            end
+          end
         end
 
         context 'And user is not the owner' do
@@ -115,7 +117,7 @@ RSpec.describe 'Api::V1::Questions', type: :request do
         end
 
         it 'returns 404' do
-          delete '/app/v1/questions/0', params: { question: @question_attributes }, headers: header_with_authentication(@user)
+          delete '/api/v1/questions/0', params: { question: @question_attributes }, headers: header_with_authentication(@user)
           expect_status(404)
         end
       end
@@ -137,7 +139,7 @@ RSpec.describe 'Api::V1::Questions', type: :request do
           before do
             @form = create(:form, user: @user)
             @question = create(:question, form: @form)
-            delete "/api/v1/questions/#{@question.id}", params: {}, headers: header_with_authentication(@other_user)
+            delete "/api/v1/questions/#{@question.id}", params: {}, headers: header_with_authentication(@user)
           end
 
           it 'returns 200' do

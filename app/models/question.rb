@@ -4,5 +4,5 @@ class Question < ApplicationRecord
 
   validates :title, :kind, :form, presence: true
 
-  enum status: [:short_text, :long_text, :integer, :boolean]
+  enum kind: [:short_text, :long_text, :integer, :boolean]
 end

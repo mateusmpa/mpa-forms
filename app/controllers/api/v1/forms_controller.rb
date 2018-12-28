@@ -5,7 +5,7 @@ class Api::V1::FormsController < Api::V1::ApiController
 
   def index
     @forms = current_api_v1_user.forms
-    render json: @forms.to_json
+    render json: @forms
   end
 
   def show
@@ -35,7 +35,7 @@ class Api::V1::FormsController < Api::V1::ApiController
 
   def allow_only_owner
     unless current_api_v1_user == @form.user
-      render(json: {}, status: :forbidden)
+      render(json: {}, status: :forbidden) and return
     end
   end
 
